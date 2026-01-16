@@ -1,5 +1,5 @@
 {
-    "name": "Martin6363/laravel-api-auth",
+    "name": "martin6363/laravel-api-auth",
     "description": "Professional, configuration-driven API authentication package for Laravel 12+ using Sanctum",
     "type": "library",
     "keywords": [
