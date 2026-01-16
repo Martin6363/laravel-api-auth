@@ -25,7 +25,7 @@ A professional, configuration-driven API authentication package for Laravel 12+ 
 ### Step 1: Install via Composer
 
 ```bash
-composer require Martin6363/laravel-api-auth
+composer require martin6363/laravel-api-auth
 ```
 
 ### Step 2: Install Laravel Sanctum (if not already installed)
