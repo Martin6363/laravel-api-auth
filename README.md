@@ -3,14 +3,6 @@
 A professional, configuration-driven API authentication package for Laravel 12+ using Laravel Sanctum. Built with clean architecture principles and designed for easy customization.
 
 ## ✨ Features
-- ✅ **Full API Auth Flow**: Login, Registration, Logout.
-- ✅ **Secure Password Management**: Forgot Password & Reset Password.
-- ✅ **Email Verification**: Built-in API support for verifying users.
-- ✅ **Clean Architecture**: Business logic is decoupled into Service classes.
-- ✅ **Highly Extensible**: Easily override controllers, requests, or services.
-- ✅ **Test Driven**: Ships with a complete Pest test suite.
->>>>>>> 572ac741b9045bf5f06042e50fb79fb8bd26e070
-
 - 🔐 **Complete Authentication Flow**: Registration, Login, Logout
 - 🔑 **Token Management**: Access tokens with refresh capability
 - 🔒 **Password Management**: Forgot password and reset password functionality
@@ -36,7 +28,6 @@ A professional, configuration-driven API authentication package for Laravel 12+ 
 composer require Martin6363/laravel-api-auth
 ```
 
-<<<<<<< HEAD
 ### Step 2: Install Laravel Sanctum (if not already installed)
 
 ```bash
@@ -46,17 +37,6 @@ php artisan migrate
 ```
 
 ### Step 3: Install the Package
-
-=======
-1. Install filles in your project
-- ✅ **Publish the configuration file.**
-- ✅ **Publish the API routes.**
-- ✅ **Publish the controllers, requests, and services.**
-```bash
-php artisan api-auth:install
-```
-
-<<<<<<< HEAD
 This command will:
 - Publish the configuration file to `config/api-auth.php`
 - Check for Laravel Sanctum installation
