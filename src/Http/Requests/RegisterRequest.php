@@ -1,9 +1,8 @@
 <?php
 
-namespace Vendor\ApiAuth\Http\Requests\Auth;
+namespace Martin6363\ApiAuth\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class RegisterRequest extends FormRequest
 {

@@ -1,11 +1,10 @@
 <?php
 
-namespace Vendor\ApiAuth\Services\Auth;
+namespace Martin6363\ApiAuth\Services;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
-use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthService
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Vendor\ApiAuth\Http\Controllers;
+namespace Martin6363\ApiAuth\Http\Controllers;
 
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;

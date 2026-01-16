@@ -1,10 +1,10 @@
 <?php
 
-namespace Vendor\ApiAuth\Http\Requests\Auth;
+namespace Martin6363\ApiAuth\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends FormRequest
+class ForgotPasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,9 +19,14 @@ class LoginRequest extends FormRequest
      */
     public function rules(): array
     {
+        $userModel = config('api-auth.user_model');
+        $tableName = (new $userModel)->getTable();
+
         return [
-            'email' => ['required', 'string', 'email', 'max:255'],
-            'password' => ['required', 'string'],
+            'email' => array_merge(
+                config('api-auth.validation.email', ['required', 'string', 'email', 'max:255']),
+                ['exists:' . $tableName . ',email']
+            ),
         ];
     }
 
@@ -33,7 +38,7 @@ class LoginRequest extends FormRequest
         return [
             'email.required' => __('validation.required', ['attribute' => 'email']),
             'email.email' => __('validation.email', ['attribute' => 'email']),
-            'password.required' => __('validation.required', ['attribute' => 'password']),
+            'email.exists' => __('validation.exists', ['attribute' => 'email']),
         ];
     }
 }

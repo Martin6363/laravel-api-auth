@@ -1,11 +1,11 @@
 <?php
 
-namespace Vendor\ApiAuth\Tests;
+namespace Martin6363\ApiAuth\Tests;
 
 use Orchestra\Testbench\TestCase as Orchestra;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Vendor\ApiAuth\Providers\ApiAuthServiceProvider;
+use Martin6363\ApiAuth\Providers\ApiAuthServiceProvider;
 use Laravel\Sanctum\SanctumServiceProvider;
 
 class TestCase extends Orchestra
@@ -27,8 +27,8 @@ class TestCase extends Orchestra
             'prefix'   => '',
         ]);
 
-        $app['config']->set('auth.providers.users.model', \Vendor\ApiAuth\Tests\Models\User::class);
-        $app['config']->set('api-auth.user_model', \Vendor\ApiAuth\Tests\Models\User::class);
+        $app['config']->set('auth.providers.users.model', \Martin6363\ApiAuth\Tests\Models\User::class);
+        $app['config']->set('api-auth.user_model', \Martin6363\ApiAuth\Tests\Models\User::class);
     }
 
     protected function setUp(): void

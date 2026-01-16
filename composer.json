@@ -31,18 +31,18 @@
     },
     "autoload": {
         "psr-4": {
-            "Vendor\\ApiAuth\\": "src/"
+            "Martin6363\\ApiAuth\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Vendor\\ApiAuth\\Tests\\": "tests/"
+            "Martin6363\\ApiAuth\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Vendor\\ApiAuth\\Providers\\ApiAuthServiceProvider"
+                "Martin6363\\ApiAuth\\Providers\\ApiAuthServiceProvider"
             ]
         }
     },

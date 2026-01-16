@@ -1,6 +1,6 @@
 <?php
 
-namespace Vendor\ApiAuth\Tests\Models;
+namespace Martin6363\ApiAuth\Tests\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;

@@ -45,8 +45,13 @@ This command will:
 - Check for Laravel Sanctum installation
 - Optionally run migrations
 
-### Step 4: Configure Your User Model
+### Step 4 (Optional): Publish Logics (Controllers, Services)
+- If you want to customize the internal logic of the authentication (e.g., change the registration logic or add custom responses), you can publish the controllers, services to your application:
+```bash 
+php artisan vendor:publish --tag=api-auth-logic
+```
 
+### Step 5: Configure Your User Model
 Ensure your `User` model uses the `HasApiTokens` trait from Laravel Sanctum:
 
 ```php
@@ -59,7 +64,7 @@ class User extends Authenticatable
 }
 ```
 
-### Step 5: Configure Email (Optional)
+### Step 6: Configure Email (Optional)
 
 If you're using email verification or password reset, configure your email settings in `.env`:
 

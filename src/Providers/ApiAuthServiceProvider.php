@@ -1,10 +1,10 @@
 <?php
 
-namespace Vendor\ApiAuth\Providers;
+namespace Martin6363\ApiAuth\Providers;
 
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
-use Vendor\ApiAuth\Http\Middleware\ThrottleAuthRequests;
+use Martin6363\ApiAuth\Http\Middleware\ThrottleAuthRequests;
 
 class ApiAuthServiceProvider extends ServiceProvider
 {
@@ -101,9 +101,19 @@ class ApiAuthServiceProvider extends ServiceProvider
             __DIR__.'/../../lang/en' => $this->app->langPath('en'),
         ], 'api-auth-lang');
 
+        $this->publishes([
+            __DIR__.'/../../src/Http/Controllers' => app_path('Http/Controllers/ApiAuth'),
+            __DIR__.'/../../src/Services' => app_path('Services/ApiAuth'),
+            __DIR__.'/../../src/Http/Requests' => app_path('Http/Requests/ApiAuth'),
+        ], 'api-auth-logic');
+
+        $this->publishes([
+            __DIR__.'/../../src/Http/Requests' => app_path('Http/Requests/ApiAuth'),
+        ], 'api-auth-requests');
+
         // Register commands
         $this->commands([
-            \Vendor\ApiAuth\Console\Commands\InstallApiAuthCommand::class,
+            \Martin6363\ApiAuth\Console\Commands\InstallApiAuthCommand::class,
         ]);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-use Vendor\ApiAuth\Tests\Models\User;
+use Martin6363\ApiAuth\Tests\Models\User;
 
 it('can login an existing user', function () {
     $user = User::create([

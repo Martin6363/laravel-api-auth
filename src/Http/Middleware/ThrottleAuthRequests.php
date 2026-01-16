@@ -1,10 +1,9 @@
 <?php
 
-namespace Vendor\ApiAuth\Http\Middleware;
+namespace Martin6363\ApiAuth\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\RateLimiter;
 use Symfony\Component\HttpFoundation\Response;
 

@@ -1,7 +1,6 @@
 <?php
 
-use Vendor\ApiAuth\Tests\Models\User;
-use Illuminate\Support\Facades\Password;
+use Martin6363\ApiAuth\Tests\Models\User;
 use Illuminate\Support\Facades\Notification;
 
 it('can send a password reset link', function () {

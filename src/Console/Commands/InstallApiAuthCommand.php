@@ -1,8 +1,10 @@
 <?php
 
-namespace Vendor\ApiAuth\Console\Commands;
+namespace Martin6363\ApiAuth\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
+use Symfony\Component\Console\Command\Command as CommandAlias;
 
 class InstallApiAuthCommand extends Command
 {
@@ -27,31 +29,50 @@ class InstallApiAuthCommand extends Command
     public function handle(): int
     {
         $this->info('🚀 Installing Laravel API Auth Package...');
-        $this->newLine();
 
-        // Publish configuration
         $this->publishConfig();
-
-        // Publish language files
         $this->publishLanguages();
 
-        // Check Sanctum installation
         $this->checkSanctum();
 
-        // Run migrations if needed
+        if ($this->confirm('Do you want to publish controllers and services to customize the logic?', true)) {
+            $this->info('Publishing internal logic...');
+            $this->call('vendor:publish', ['--tag' => 'api-auth-logic', '--force' => $this->option('force')]);
+
+            $this->fixPublishedNamespaces();
+        }
+
         $this->runMigrations();
 
-        $this->newLine();
-        $this->info('✅ Laravel API Auth Package installed successfully!');
-        $this->newLine();
-        $this->line('📝 Next steps:');
-        $this->line('   1. Review the configuration file: config/api-auth.php');
-        $this->line('   2. Ensure your User model uses HasApiTokens trait from Laravel Sanctum');
-        $this->line('   3. Configure your email settings for password reset and verification');
-        $this->line('   4. Customize routes and middleware as needed');
-        $this->newLine();
+        $this->info('✅ Installation complete!');
+        return CommandAlias::SUCCESS;
+    }
 
-        return Command::SUCCESS;
+    protected function fixPublishedNamespaces(): void
+    {
+        $this->info('🔧 Adjusting namespaces in app/ directory...');
+
+        $directories = [
+            app_path('Http/Controllers/ApiAuth'),
+            app_path('Http/Requests/ApiAuth'),
+            app_path('Services/ApiAuth'),
+        ];
+
+        foreach ($directories as $directory) {
+            if (!File::isDirectory($directory)) {
+                continue;
+            }
+
+            foreach (File::allFiles($directory) as $file) {
+                $content = File::get($file);
+
+                $content = str_replace(array('Martin6363\\ApiAuth\\Http\\Controllers', 'Martin6363\\ApiAuth\\Http\\Requests', 'Martin6363\\ApiAuth\\Services', 'use Martin6363\\ApiAuth\\'),
+                    array('App\\Http\\Controllers\\ApiAuth', 'App\\Http\\Requests\\ApiAuth', 'App\\Services\\ApiAuth', 'use App\\'), $content);
+
+                File::put($file, $content);
+            }
+        }
+        $this->info('   ✓ Namespaces updated to App\... standard.');
     }
 
     /**
@@ -91,16 +112,9 @@ class InstallApiAuthCommand extends Command
      */
     protected function checkSanctum(): void
     {
-        $this->info('🔍 Checking Laravel Sanctum installation...');
-
-        if (! class_exists(\Laravel\Sanctum\SanctumServiceProvider::class)) {
-            $this->warn('   ⚠ Laravel Sanctum is not installed.');
-            $this->line('   Run: composer require laravel/sanctum');
-            $this->line('   Then: php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"');
-            $this->line('   And: php artisan migrate');
-            $this->newLine();
-        } else {
-            $this->info('   ✓ Laravel Sanctum is installed');
+        if (!class_exists(\Laravel\Sanctum\SanctumServiceProvider::class)) {
+            $this->info('📦 Installing Laravel Sanctum...');
+            $this->call('install:api');
         }
     }
 

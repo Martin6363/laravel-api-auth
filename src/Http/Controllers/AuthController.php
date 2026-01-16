@@ -1,17 +1,16 @@
 <?php
 
-namespace Vendor\ApiAuth\Http\Controllers\Api\Auth;
+namespace Martin6363\ApiAuth\Http\Controllers;
 
-use Vendor\ApiAuth\Http\Requests\Auth\LoginRequest;
-use Vendor\ApiAuth\Services\Auth\AuthService;
-use Vendor\ApiAuth\Http\Controllers\Controller;
-use Vendor\ApiAuth\Services\Auth\PasswordService;
-use Vendor\ApiAuth\Services\Auth\EmailVerificationService;
-use Vendor\ApiAuth\Http\Requests\Auth\RegisterRequest;
-use Vendor\ApiAuth\Http\Requests\Auth\ForgotPasswordRequest;
-use Vendor\ApiAuth\Http\Requests\Auth\ResetPasswordRequest;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Martin6363\ApiAuth\Http\Requests\ForgotPasswordRequest;
+use Martin6363\ApiAuth\Http\Requests\LoginRequest;
+use Martin6363\ApiAuth\Http\Requests\RegisterRequest;
+use Martin6363\ApiAuth\Http\Requests\ResetPasswordRequest;
+use Martin6363\ApiAuth\Services\AuthService;
+use Martin6363\ApiAuth\Services\EmailVerificationService;
+use Martin6363\ApiAuth\Services\PasswordService;
 
 class AuthController extends Controller
 {
