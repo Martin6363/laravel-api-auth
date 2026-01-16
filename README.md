@@ -37,6 +37,9 @@ php artisan migrate
 ```
 
 ### Step 3: Install the Package
+```bash
+php artisan api-auth:install
+```
 This command will:
 - Publish the configuration file to `config/api-auth.php`
 - Check for Laravel Sanctum installation
