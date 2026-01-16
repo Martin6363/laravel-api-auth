@@ -3,30 +3,68 @@
 namespace Vendor\ApiAuth\Services\Auth;
 
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 
 class PasswordService
 {
-    public function sendResetLink(array $data)
+    /**
+     * Send password reset link to user.
+     *
+     * @param  array  $data
+     * @return string
+     * @throws ValidationException
+     */
+    public function sendResetLink(array $data): string
     {
         $status = Password::broker()->sendResetLink($data);
 
         if ($status !== Password::RESET_LINK_SENT) {
-            throw ValidationException::withMessages(['email' => [__($status)]]);
+            Log::warning('Password reset link failed to send', [
+                'email' => $data['email'] ?? 'unknown',
+                'status' => $status,
+            ]);
+
+            throw ValidationException::withMessages([
+                'email' => [__($status)],
+            ]);
         }
+
+        Log::info('Password reset link sent', ['email' => $data['email']]);
 
         return __($status);
     }
 
-    public function reset(array $data)
+    /**
+     * Reset user password.
+     *
+     * @param  array  $data
+     * @return string
+     * @throws ValidationException
+     */
+    public function reset(array $data): string
     {
         $status = Password::broker()->reset($data, function ($user, $password) {
-            $user->forceFill(['password' => Hash::make($password)])->save();
+            $user->forceFill([
+                'password' => Hash::make($password),
+            ])->save();
+
+            // Revoke all tokens for security
+            $user->tokens()->delete();
+
+            Log::info('Password reset successfully', ['user_id' => $user->id]);
         });
 
         if ($status !== Password::PASSWORD_RESET) {
-            throw ValidationException::withMessages(['email' => [__($status)]]);
+            Log::warning('Password reset failed', [
+                'email' => $data['email'] ?? 'unknown',
+                'status' => $status,
+            ]);
+
+            throw ValidationException::withMessages([
+                'email' => [__($status)],
+            ]);
         }
 
         return __($status);

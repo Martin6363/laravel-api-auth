@@ -16,8 +16,12 @@ it('can login an existing user', function () {
 
     $response->assertStatus(200)
         ->assertJsonStructure([
-            'user' => ['id', 'name', 'email'],
-            'token'
+            'message',
+            'data' => [
+                'token',
+                'token_type',
+                'user' => ['id', 'name', 'email'],
+            ]
         ]);
 });
 

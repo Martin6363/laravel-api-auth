@@ -2,7 +2,7 @@
 
 namespace Vendor\ApiAuth\Http\Controllers\Api\Auth;
 
-use Orchestra\Workbench\Http\Requests\Auth\LoginRequest;
+use Vendor\ApiAuth\Http\Requests\Auth\LoginRequest;
 use Vendor\ApiAuth\Services\Auth\AuthService;
 use Vendor\ApiAuth\Http\Controllers\Controller;
 use Vendor\ApiAuth\Services\Auth\PasswordService;
@@ -15,51 +15,153 @@ use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
+    /**
+     * Create a new AuthController instance.
+     */
     public function __construct(
         protected AuthService $authService,
         protected PasswordService $passwordService,
         protected EmailVerificationService $verificationService
     ) {}
 
+    /**
+     * Register a new user.
+     *
+     * @param  RegisterRequest  $request
+     * @return JsonResponse
+     */
     public function register(RegisterRequest $request): JsonResponse
     {
         $result = $this->authService->register($request->validated());
-        return response()->json($result, 201);
+        
+        return response()->json([
+            'message' => __('auth.registered'),
+            'data' => $result,
+        ], 201);
     }
 
+    /**
+     * Authenticate a user and return token.
+     *
+     * @param  LoginRequest  $request
+     * @return JsonResponse
+     */
     public function login(LoginRequest $request): JsonResponse
     {
         $result = $this->authService->login($request->validated());
-        return response()->json($result);
+        
+        return response()->json([
+            'message' => __('auth.login_success'),
+            'data' => $result,
+        ]);
     }
 
+    /**
+     * Logout the authenticated user.
+     *
+     * @param  Request  $request
+     * @return JsonResponse
+     */
     public function logout(Request $request): JsonResponse
     {
         $this->authService->logout($request->user());
-        return response()->json(['message' => 'Logged out successfully']);
+        
+        return response()->json([
+            'message' => __('auth.logout_success'),
+        ]);
     }
 
+    /**
+     * Refresh the user's access token.
+     *
+     * @param  Request  $request
+     * @return JsonResponse
+     */
+    public function refreshToken(Request $request): JsonResponse
+    {
+        $result = $this->authService->refreshToken($request->user());
+        
+        return response()->json([
+            'message' => __('auth.token_refreshed'),
+            'data' => $result,
+        ]);
+    }
+
+    /**
+     * Get the authenticated user's profile.
+     *
+     * @param  Request  $request
+     * @return JsonResponse
+     */
+    public function profile(Request $request): JsonResponse
+    {
+        $result = $this->authService->getProfile($request->user());
+        
+        return response()->json([
+            'message' => __('auth.profile_retrieved'),
+            'data' => $result,
+        ]);
+    }
+
+    /**
+     * Send password reset link.
+     *
+     * @param  ForgotPasswordRequest  $request
+     * @return JsonResponse
+     */
     public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {
         $message = $this->passwordService->sendResetLink($request->validated());
-        return response()->json(['message' => $message]);
+        
+        return response()->json([
+            'message' => $message,
+        ]);
     }
 
+    /**
+     * Reset user password.
+     *
+     * @param  ResetPasswordRequest  $request
+     * @return JsonResponse
+     */
     public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
         $message = $this->passwordService->reset($request->validated());
-        return response()->json(['message' => $message]);
+        
+        return response()->json([
+            'message' => $message,
+        ]);
     }
 
+    /**
+     * Send email verification notification.
+     *
+     * @param  Request  $request
+     * @return JsonResponse
+     */
     public function sendVerification(Request $request): JsonResponse
     {
         $message = $this->verificationService->sendNotification($request->user());
-        return response()->json(['message' => $message]);
+        
+        return response()->json([
+            'message' => $message,
+        ]);
     }
 
-    public function verify(Request $request, $id, $hash): JsonResponse
+    /**
+     * Verify user email.
+     *
+     * @param  Request  $request
+     * @param  int|string  $id
+     * @param  string  $hash
+     * @return JsonResponse
+     */
+    public function verify(Request $request, $id, string $hash): JsonResponse
     {
         $message = $this->verificationService->verify($id, $hash);
-        return response()->json(['message' => $message]);
+        
+        return response()->json([
+            'message' => $message,
+        ]);
     }
 }

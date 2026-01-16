@@ -4,3 +4,4 @@ composer.lock
 .env
 phpunit.xml
 tests/Pest.php
+PUBLISHING.md

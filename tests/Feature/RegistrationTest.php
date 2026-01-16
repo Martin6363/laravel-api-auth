@@ -8,7 +8,15 @@ it('can register a new user', function () {
         'password_confirmation' => 'password123',
     ]);
 
-    $response->assertStatus(201);
+    $response->assertStatus(201)
+        ->assertJsonStructure([
+            'message',
+            'data' => [
+                'token',
+                'token_type',
+                'user' => ['id', 'name', 'email'],
+            ]
+        ]);
 
     $this->assertDatabaseHas('users', [
         'email' => 'john@example.com',
