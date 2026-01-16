@@ -38,7 +38,7 @@ php artisan migrate
 
 ### Step 3: Install the Package
 ```bash
-php artisan api-auth:install
+php artisan api-auth:install // --force will update the existing config file
 ```
 This command will:
 - Publish the configuration file to `config/api-auth.php`
