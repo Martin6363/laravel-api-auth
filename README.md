@@ -2,11 +2,7 @@
 
 A professional, configuration-driven API authentication package for Laravel 12+ using Laravel Sanctum. Built with clean architecture principles and designed for easy customization.
 
-<<<<<<< HEAD
 ## ✨ Features
-=======
-## Features
-
 - ✅ **Full API Auth Flow**: Login, Registration, Logout.
 - ✅ **Secure Password Management**: Forgot Password & Reset Password.
 - ✅ **Email Verification**: Built-in API support for verifying users.
