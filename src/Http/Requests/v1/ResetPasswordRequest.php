@@ -1,6 +1,6 @@
 <?php
 
-namespace Martin6363\ApiAuth\Http\Requests;
+namespace Martin6363\ApiAuth\Http\Requests\v1;
 
 use Illuminate\Foundation\Http\FormRequest;
 

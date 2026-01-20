@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Martin6363\ApiAuth\Http\Controllers\AuthController;
+use Martin6363\ApiAuth\Http\Controllers\v1\AuthController;
 
 $prefix = config('api-auth.routes.prefix', 'api/auth');
 $middleware = config('api-auth.routes.middleware', ['api']);

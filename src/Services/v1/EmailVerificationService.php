@@ -1,9 +1,13 @@
 <?php
 
-namespace Martin6363\ApiAuth\Services;
+namespace Martin6363\ApiAuth\Services\v1;
 
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
+use Martin6363\ApiAuth\Notifications\EmailVerificationNotification;
 
 class EmailVerificationService
 {
@@ -23,7 +27,7 @@ class EmailVerificationService
     /**
      * Send email verification notification.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param  Authenticatable  $user
      * @return string
      * @throws ValidationException
      */
@@ -36,20 +40,23 @@ class EmailVerificationService
         }
 
         try {
-            $user->sendEmailVerificationNotification();
-            
-            Log::info('Verification email sent', ['user_id' => $user->id]);
+            $url = URL::temporarySignedRoute(
+                'verification.verify',
+                now()->addMinutes(Config::get('api-auth.email_verification.expire', 60)),
+                ['id' => $user->id, 'hash' => sha1($user->getEmailForVerification())]
+            );
+
+            $user->notify(new EmailVerificationNotification($url));
+
+            Log::info('Verification email processed', [
+                'user_id' => $user->id,
+                'mode' => Config::get('api-auth.emails.dispatch_mode')
+            ]);
 
             return __('auth.verification_sent');
         } catch (\Exception $e) {
-            Log::error('Failed to send verification email', [
-                'user_id' => $user->id,
-                'error' => $e->getMessage(),
-            ]);
-
-            throw ValidationException::withMessages([
-                'email' => [__('auth.verification_failed')],
-            ]);
+            Log::error('Verify send Mail error: ' . $e->getMessage());
+            return __('auth.verification_send_failed');
         }
     }
 

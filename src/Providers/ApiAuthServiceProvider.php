@@ -25,14 +25,10 @@ class ApiAuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Load language files
         $this->loadTranslations();
-
-        // Register middleware
         $this->registerMiddleware();
-
-        // Load routes
         $this->loadRoutes();
+        $this->loadViews();
 
         // Publish assets
         if ($this->app->runningInConsole()) {
@@ -62,10 +58,7 @@ class ApiAuthServiceProvider extends ServiceProvider
             $lines["auth.$key"] = $value;
         }
 
-        $this->app['translator']->addLines(
-            $lines,
-            $locale
-        );
+        $this->app['translator']->addLines($lines, $locale);
     }
 
     /**
@@ -83,6 +76,11 @@ class ApiAuthServiceProvider extends ServiceProvider
     protected function loadRoutes(): void
     {
         $this->loadRoutesFrom(__DIR__.'/../../routes/api.php');
+    }
+
+    protected function loadViews(): void
+    {
+        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'api-auth');
     }
 
     /**

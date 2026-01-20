@@ -1,6 +1,6 @@
 <?php
 
-namespace Martin6363\ApiAuth\Services;
+namespace Martin6363\ApiAuth\Services\v1;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;

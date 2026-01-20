@@ -1,7 +1,8 @@
 <?php
 
-namespace Martin6363\ApiAuth\Services;
+namespace Martin6363\ApiAuth\Services\v1;
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -13,69 +14,27 @@ class AuthService
      */
     protected string $userModel;
 
-    /**
-     * Create a new AuthService instance.
-     */
-    public function __construct()
+    public function __construct(
+        protected EmailVerificationService $emailService,
+    )
     {
-        $this->userModel = config('api-auth.user_model');
+        $this->userModel = Config::get('api-auth.user_model');
     }
 
     /**
      * Register a new user.
      *
-     * @param  array  $data
+     * @param array $data
      * @return array
      */
     public function register(array $data): array
     {
-        // Get fields to include in registration from config
-        $registrationFields = config('api-auth.registration_fields', []);
-        
-        // If registration_fields is empty, use all validation fields except password
-        if (empty($registrationFields)) {
-            $validationFields = array_keys(config('api-auth.validation', []));
-            $registrationFields = array_filter($validationFields, function($field) {
-                return $field !== 'password' && $field !== 'password_confirmation';
-            });
-        }
-        
-        // Prepare user data - include all fields from validation config that exist in data
-        $userData = [];
-        
-        // Process each field from registration fields
-        foreach ($registrationFields as $field) {
-            if (isset($data[$field])) {
-                $userData[$field] = $data[$field];
-            }
-        }
-        
-        // Include any additional fields from validated data that aren't in config
-        // This allows for dynamic fields not explicitly listed in validation config
-        foreach ($data as $key => $value) {
-            // Skip password fields and fields already processed
-            if (!in_array($key, ['password', 'password_confirmation']) && !isset($userData[$key])) {
-                $userData[$key] = $value;
-            }
-        }
-        
-        // Hash password separately (always required)
-        if (isset($data['password'])) {
-            $userData['password'] = Hash::make($data['password']);
-        }
+        $userData = $this->prepareUserData($data);
 
         $user = $this->userModel::create($userData);
 
-        // Send email verification if enabled
-        if (config('api-auth.email_verification.send_on_register', false)) {
-            try {
-                $user->sendEmailVerificationNotification();
-            } catch (\Exception $e) {
-                Log::warning('Failed to send verification email', [
-                    'user_id' => $user->id,
-                    'error' => $e->getMessage(),
-                ]);
-            }
+        if (Config::get('api-auth.email_verification.send_on_register', false)) {
+            $this->safeSendVerification($user);
         }
 
         Log::info('User registered successfully', ['user_id' => $user->id]);
@@ -86,19 +45,30 @@ class AuthService
     /**
      * Authenticate a user and return token.
      *
-     * @param  array  $credentials
+     * @param array $credentials
      * @return array
      * @throws ValidationException
      */
     public function login(array $credentials): array
     {
-        $user = $this->userModel::where('email', $credentials['email'])->first();
+        $password = $credentials['password'];
+        $loginValue = $credentials['login'] ?? ($credentials['email'] ?? null);
+        $columns = config('api-auth.login.search_columns', ['email']);
 
-        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
-            Log::warning('Failed login attempt', ['email' => $credentials['email']]);
-            
+        $user = $this->userModel::where(function($query) use ($columns, $loginValue) {
+            foreach ($columns as $column) {
+                $query->orWhere($column, $loginValue);
+            }
+        })->first();
+
+        if (!$user || !Hash::check($password, $user->password)) {
+            Log::warning('Failed login attempt', [
+                'login_identifier' => $loginValue,
+                'ip' => request()->ip()
+            ]);
+
             throw ValidationException::withMessages([
-                'email' => [__('auth.failed')],
+                'login' => [trans('api-auth::auth.failed')],
             ]);
         }
 
@@ -110,13 +80,13 @@ class AuthService
     /**
      * Logout the authenticated user.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param \Illuminate\Contracts\Auth\Authenticatable $user
      * @return bool
      */
     public function logout($user): bool
     {
         $deleted = $user->currentAccessToken()->delete();
-        
+
         if ($deleted) {
             Log::info('User logged out successfully', ['user_id' => $user->id]);
         }
@@ -127,7 +97,7 @@ class AuthService
     /**
      * Refresh the user's access token.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param \Illuminate\Contracts\Auth\Authenticatable $user
      * @return array
      */
     public function refreshToken($user): array
@@ -142,13 +112,13 @@ class AuthService
     /**
      * Get the authenticated user's profile.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param \Illuminate\Contracts\Auth\Authenticatable $user
      * @return array
      */
     public function getProfile($user): array
     {
         $userData = $user->toArray();
-        
+
         // Hide sensitive fields
         $hiddenFields = config('api-auth.response.hidden_fields', []);
         foreach ($hiddenFields as $field) {
@@ -158,10 +128,47 @@ class AuthService
         return ['user' => $userData];
     }
 
+    protected function safeSendVerification($user): void
+    {
+        try {
+            $this->emailService->sendNotification($user);
+        } catch (\Exception $e) {
+            Log::warning('Verification email failed', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    protected function prepareUserData(array $data): array
+    {
+        $fields = Config::get('api-auth.registration_fields', []);
+
+        if (empty($fields)) {
+            $fields = array_diff(
+                array_keys(Config::get('api-auth.validation', [])),
+                ['password', 'password_confirmation']
+            );
+        }
+
+        $userData = array_intersect_key($data, array_flip($fields));
+        foreach ($data as $key => $value) {
+            if (!in_array($key, ['password', 'password_confirmation']) && !isset($userData[$key])) {
+                $userData[$key] = $value;
+            }
+        }
+
+        if (isset($data['password'])) {
+            $userData['password'] = Hash::make($data['password']);
+        }
+
+        return $userData;
+    }
+
     /**
      * Generate authentication response with user and token.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param \Illuminate\Contracts\Auth\Authenticatable $user
      * @return array
      */
     protected function generateResponse($user): array
@@ -187,7 +194,7 @@ class AuthService
 
         if (config('api-auth.response.include_user', true)) {
             $userData = $user->toArray();
-            
+
             // Hide sensitive fields
             $hiddenFields = config('api-auth.response.hidden_fields', []);
             foreach ($hiddenFields as $field) {

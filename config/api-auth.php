@@ -188,6 +188,21 @@ return [
         // 'dob' => ['nullable', 'date'],
     ],
 
+    /*|--------------------------------------------------------------------------
+        | Login Fields
+        |--------------------------------------------------------------------------
+        |
+        | Fields that should be used for login authentication.
+    */
+    'login' => [
+        'fields' => [
+            'login' => ['required', 'string'], // Can be email or username
+            'password' => ['required', 'string'],
+        ],
+        // Fields to search for the 'login' value
+        'search_columns' => ['email', 'username'],
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Registration Fields
@@ -201,4 +216,25 @@ return [
     |
     */
     'registration_fields' => [],
+
+    'emails' => [
+        /*
+         * Email dispatch mode: 'queue' or 'sync'
+         */
+        'dispatch_mode' => 'queue', // 'queue' OR 'sync'
+
+        /*
+         * Queue name for sending emails (if dispatch_mode is 'queue')
+         * (e.g., 'emails', 'default')
+         */
+        'queue_name' => 'default',
+
+        /*
+         * Email theme customization options.
+         */
+        'theme' => [
+            'primary_color' => '#4f46e5',
+            'button_text_color' => '#ffffff',
+        ],
+    ],
 ];

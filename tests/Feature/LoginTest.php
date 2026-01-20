@@ -10,13 +10,12 @@ it('can login an existing user', function () {
     ]);
 
     $response = $this->postJson('/api/auth/login', [
-        'email' => 'test@example.com',
+        'login' => 'test@example.com',
         'password' => 'password123',
     ]);
 
     $response->assertStatus(200)
         ->assertJsonStructure([
-            'message',
             'data' => [
                 'token',
                 'token_type',
@@ -33,7 +32,7 @@ it('fails login with wrong credentials', function () {
     ]);
 
     $response = $this->postJson('/api/auth/login', [
-        'email' => 'test@example.com',
+        'login' => 'test@example.com',
         'password' => 'wrong_password',
     ]);
 

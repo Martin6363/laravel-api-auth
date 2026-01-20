@@ -4,19 +4,19 @@ A professional, configuration-driven API authentication package for Laravel 12+ 
 
 ## ✨ Features
 - 🔐 **Complete Authentication Flow**: Registration, Login, Logout
+- 🆔 **Dynamic Identification**: Login using email, username, or any custom field
 - 🔑 **Token Management**: Access tokens with refresh capability
 - 🔒 **Password Management**: Forgot password and reset password functionality
-- ✉️ **Email Verification**: Built-in email verification support
+- ✉️ **Email Verification**: Built-in email verification support (Queueable & Customizable)
 - 👤 **User Profile**: Get authenticated user profile endpoint
 - 🛡️ **Rate Limiting**: Configurable rate limiting for security
 - ⚙️ **Highly Configurable**: Extensive configuration options
 - 🏗️ **Clean Architecture**: Service-oriented design for easy extension
-- 📝 **Well Documented**: Comprehensive documentation and code comments
 - 🧪 **Test Ready**: Built with testing in mind
 
 ## 📋 Requirements
 
-- PHP >= 8.2
+- PHP >= 8.2+
 - Laravel >= 11.0 or >= 12.0
 - Laravel Sanctum >= 4.0
 
@@ -127,6 +127,19 @@ After installation, you can customize the package behavior by editing `config/ap
 ],
 ```
 
+### Email Theme Customization
+- Customize the look and feel of your verification emails directly from the config.
+
+```php
+'emails' => [
+    'dispatch_mode' => 'queue', // 'queue' or 'sync'
+    'theme' => [
+        'primary_color' => '#4f46e5',
+        'button_text_color' => '#ffffff',
+    ],
+],
+```
+
 ### Password Configuration
 
 ```php
@@ -187,7 +200,7 @@ POST /api/auth/login
 Content-Type: application/json
 
 {
-    "email": "john@example.com",
+    "login": "john@example.com", // Can be email or username ...
     "password": "password123"
 }
 ```
@@ -206,6 +219,19 @@ Content-Type: application/json
         }
     }
 }
+```
+
+### Login Configuration (Dynamic Identification)
+- You can allow users to log in using different fields (e.g., either email or username).
+```php
+'login' => [
+    'fields' => [
+        'login' => ['required', 'string'], // The input field name from frontend
+        'password' => ['required', 'string'],
+    ],
+    // The database columns to search for the user
+    'search_columns' => ['email', 'username'], 
+],
 ```
 
 #### Forgot Password
@@ -376,7 +402,7 @@ Edit `config/api-auth.php`:
 You can extend the services by binding your own implementations in a service provider:
 
 ```php
-use Vendor\ApiAuth\Services\Auth\AuthService;
+use Martin6363\ApiAuth\Services\v1\AuthService;
 
 $this->app->bind(AuthService::class, function ($app) {
     return new CustomAuthService();

@@ -5,6 +5,7 @@ namespace Martin6363\ApiAuth\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\Console\Command\Command as CommandAlias;
+use Martin6363\ApiAuth\Providers\ApiAuthServiceProvider;
 
 class InstallApiAuthCommand extends Command
 {
@@ -35,7 +36,7 @@ class InstallApiAuthCommand extends Command
 
         $this->checkSanctum();
 
-        if ($this->confirm('Do you want to publish controllers and services to customize the logic?', true)) {
+        if ($this->confirm('Do you want to publish controllers and services to customize the logic?', false)) {
             $this->info('Publishing internal logic...');
             $this->call('vendor:publish', ['--tag' => 'api-auth-logic', '--force' => $this->option('force')]);
 
@@ -52,10 +53,12 @@ class InstallApiAuthCommand extends Command
     {
         $this->info('🔧 Adjusting namespaces in app/ directory...');
 
+        $replacements = $this->getNamespaceReplacements();
+
         $directories = [
-            app_path('Http/Controllers/ApiAuth'),
-            app_path('Http/Requests/ApiAuth'),
-            app_path('Services/ApiAuth'),
+            app_path('Http/Controllers/ApiAuth/v1'),
+            app_path('Http/Requests/ApiAuth/v1'),
+            app_path('Services/ApiAuth/v1'),
         ];
 
         foreach ($directories as $directory) {
@@ -66,13 +69,27 @@ class InstallApiAuthCommand extends Command
             foreach (File::allFiles($directory) as $file) {
                 $content = File::get($file);
 
-                $content = str_replace(array('Martin6363\\ApiAuth\\Http\\Controllers', 'Martin6363\\ApiAuth\\Http\\Requests', 'Martin6363\\ApiAuth\\Services', 'use Martin6363\\ApiAuth\\'),
-                    array('App\\Http\\Controllers\\ApiAuth', 'App\\Http\\Requests\\ApiAuth', 'App\\Services\\ApiAuth', 'use App\\'), $content);
+                // Replace namespaces
+                $content = str_replace(
+                    array_keys($replacements),
+                    array_values($replacements),
+                    $content
+                );
 
                 File::put($file, $content);
             }
         }
         $this->info('   ✓ Namespaces updated to App\... standard.');
+    }
+
+    protected function getNamespaceReplacements(): array
+    {
+        return [
+            'Martin6363\\ApiAuth\\Http\\Controllers\\v1'    => 'App\\Http\\Controllers\\ApiAuth\\v1',
+            'Martin6363\\ApiAuth\\Http\\Requests\\v1'       => 'App\\Http\\Requests\\ApiAuth\\v1',
+            'Martin6363\\ApiAuth\\Services\\v1'             => 'App\\Services\\ApiAuth\\v1',
+            'use Martin6363\\ApiAuth\\'                     => 'use App\\',
+        ];
     }
 
     /**
@@ -83,7 +100,7 @@ class InstallApiAuthCommand extends Command
         $this->info('📋 Publishing configuration file...');
 
         $this->call('vendor:publish', [
-            '--provider' => 'Vendor\ApiAuth\Providers\ApiAuthServiceProvider',
+            '--provider' => ApiAuthServiceProvider::class,
             '--tag' => 'api-auth-config',
             '--force' => $this->option('force'),
         ]);
@@ -99,7 +116,7 @@ class InstallApiAuthCommand extends Command
         $this->info('🌐 Publishing language files...');
 
         $this->call('vendor:publish', [
-            '--provider' => 'Vendor\ApiAuth\Providers\ApiAuthServiceProvider',
+            '--provider' => ApiAuthServiceProvider::class,
             '--tag' => 'api-auth-lang',
             '--force' => $this->option('force'),
         ]);
