@@ -28,7 +28,7 @@ class EmailVerificationService
      * Send email verification notification.
      *
      * @param  Authenticatable  $user
-     * @return string
+     *
      * @throws ValidationException
      */
     public function sendNotification($user): string
@@ -50,12 +50,13 @@ class EmailVerificationService
 
             Log::info('Verification email processed', [
                 'user_id' => $user->id,
-                'mode' => Config::get('api-auth.emails.dispatch_mode')
+                'mode' => Config::get('api-auth.emails.dispatch_mode'),
             ]);
 
             return __('auth.verification_sent');
         } catch (\Exception $e) {
-            Log::error('Verify send Mail error: ' . $e->getMessage());
+            Log::error('Verify send Mail error: '.$e->getMessage());
+
             return __('auth.verification_send_failed');
         }
     }
@@ -64,8 +65,7 @@ class EmailVerificationService
      * Verify user email.
      *
      * @param  int|string  $userId
-     * @param  string  $hash
-     * @return string
+     *
      * @throws ValidationException
      */
     public function verify($userId, string $hash): string

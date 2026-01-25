@@ -13,8 +13,6 @@ class ThrottleAuthRequests
      * Handle an incoming request.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     * @param  int|null  $maxAttempts
-     * @param  int  $decayMinutes
      */
     public function handle(Request $request, Closure $next, ?int $maxAttempts = null, int $decayMinutes = 1): Response
     {
@@ -50,10 +48,10 @@ class ThrottleAuthRequests
     protected function resolveRequestSignature(Request $request): string
     {
         return sha1(
-            $request->method() .
-            '|' . $request->server('SERVER_NAME') .
-            '|' . $request->ip() .
-            '|' . $request->path()
+            $request->method().
+            '|'.$request->server('SERVER_NAME').
+            '|'.$request->ip().
+            '|'.$request->path()
         );
     }
 

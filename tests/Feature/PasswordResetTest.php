@@ -1,7 +1,7 @@
 <?php
 
-use Martin6363\ApiAuth\Tests\Models\User;
 use Illuminate\Support\Facades\Notification;
+use Martin6363\ApiAuth\Tests\Models\User;
 
 it('can send a password reset link', function () {
     Notification::fake();

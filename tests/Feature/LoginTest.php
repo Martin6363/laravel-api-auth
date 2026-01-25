@@ -20,7 +20,7 @@ it('can login an existing user', function () {
                 'token',
                 'token_type',
                 'user' => ['id', 'name', 'email'],
-            ]
+            ],
         ]);
 });
 

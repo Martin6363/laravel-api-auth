@@ -23,16 +23,16 @@ Route::prefix($prefix)->middleware($middleware)->group(function () use ($enabled
     }
 
     if ($enabled['forgot_password'] ?? true) {
-        $passwordThrottle = $rateLimitEnabled 
-            ? ['throttle.auth:' . config('api-auth.rate_limiting.password_reset_max_attempts', 3)]
+        $passwordThrottle = $rateLimitEnabled
+            ? ['throttle.auth:'.config('api-auth.rate_limiting.password_reset_max_attempts', 3)]
             : [];
         Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])
             ->middleware($passwordThrottle);
     }
 
     if ($enabled['reset_password'] ?? true) {
-        $passwordThrottle = $rateLimitEnabled 
-            ? ['throttle.auth:' . config('api-auth.rate_limiting.password_reset_max_attempts', 3)]
+        $passwordThrottle = $rateLimitEnabled
+            ? ['throttle.auth:'.config('api-auth.rate_limiting.password_reset_max_attempts', 3)]
             : [];
         Route::post('/reset-password', [AuthController::class, 'resetPassword'])
             ->middleware($passwordThrottle);

@@ -25,14 +25,11 @@ class AuthController extends ApiController
 
     /**
      * Register a new user.
-     *
-     * @param  RegisterRequest  $request
-     * @return JsonResponse
      */
     public function register(RegisterRequest $request): JsonResponse
     {
         $result = $this->authService->register($request->validated());
-        
+
         return response()->json([
             'message' => __('auth.registered'),
             'data' => $result,
@@ -41,14 +38,11 @@ class AuthController extends ApiController
 
     /**
      * Authenticate a user and return token.
-     *
-     * @param  LoginRequest  $request
-     * @return JsonResponse
      */
     public function login(LoginRequest $request): JsonResponse
     {
         $result = $this->authService->login($request->validated());
-        
+
         return response()->json([
             'message' => __('auth.login_success'),
             'data' => $result,
@@ -57,14 +51,11 @@ class AuthController extends ApiController
 
     /**
      * Logout the authenticated user.
-     *
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function logout(Request $request): JsonResponse
     {
         $this->authService->logout($request->user());
-        
+
         return response()->json([
             'message' => __('auth.logout_success'),
         ]);
@@ -72,14 +63,11 @@ class AuthController extends ApiController
 
     /**
      * Refresh the user's access token.
-     *
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function refreshToken(Request $request): JsonResponse
     {
         $result = $this->authService->refreshToken($request->user());
-        
+
         return response()->json([
             'message' => __('auth.token_refreshed'),
             'data' => $result,
@@ -88,14 +76,11 @@ class AuthController extends ApiController
 
     /**
      * Get the authenticated user's profile.
-     *
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function profile(Request $request): JsonResponse
     {
         $result = $this->authService->getProfile($request->user());
-        
+
         return response()->json([
             'message' => __('auth.profile_retrieved'),
             'data' => $result,
@@ -104,14 +89,11 @@ class AuthController extends ApiController
 
     /**
      * Send password reset link.
-     *
-     * @param  ForgotPasswordRequest  $request
-     * @return JsonResponse
      */
     public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {
         $message = $this->passwordService->sendResetLink($request->validated());
-        
+
         return response()->json([
             'message' => $message,
         ]);
@@ -119,14 +101,11 @@ class AuthController extends ApiController
 
     /**
      * Reset user password.
-     *
-     * @param  ResetPasswordRequest  $request
-     * @return JsonResponse
      */
     public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
         $message = $this->passwordService->reset($request->validated());
-        
+
         return response()->json([
             'message' => $message,
         ]);
@@ -134,14 +113,11 @@ class AuthController extends ApiController
 
     /**
      * Send email verification notification.
-     *
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function sendVerification(Request $request): JsonResponse
     {
         $message = $this->verificationService->sendNotification($request->user());
-        
+
         return response()->json([
             'message' => $message,
         ]);
@@ -150,15 +126,12 @@ class AuthController extends ApiController
     /**
      * Verify user email.
      *
-     * @param  Request  $request
      * @param  int|string  $id
-     * @param  string  $hash
-     * @return JsonResponse
      */
     public function verify(Request $request, $id, string $hash): JsonResponse
     {
         $message = $this->verificationService->verify($id, $hash);
-        
+
         return response()->json([
             'message' => $message,
         ]);

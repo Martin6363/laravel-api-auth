@@ -2,11 +2,11 @@
 
 namespace Martin6363\ApiAuth\Tests;
 
-use Orchestra\Testbench\TestCase as Orchestra;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Martin6363\ApiAuth\Providers\ApiAuthServiceProvider;
 use Laravel\Sanctum\SanctumServiceProvider;
+use Martin6363\ApiAuth\Providers\ApiAuthServiceProvider;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
@@ -22,9 +22,9 @@ class TestCase extends Orchestra
     {
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
 
         $app['config']->set('auth.providers.users.model', \Martin6363\ApiAuth\Tests\Models\User::class);

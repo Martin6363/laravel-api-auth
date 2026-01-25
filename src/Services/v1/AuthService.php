@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Martin6363\ApiAuth\Http\Resources\v1\UserResource;
 
 class AuthService
 {
@@ -16,16 +17,12 @@ class AuthService
 
     public function __construct(
         protected EmailVerificationService $emailService,
-    )
-    {
+    ) {
         $this->userModel = Config::get('api-auth.user_model');
     }
 
     /**
      * Register a new user.
-     *
-     * @param array $data
-     * @return array
      */
     public function register(array $data): array
     {
@@ -45,8 +42,6 @@ class AuthService
     /**
      * Authenticate a user and return token.
      *
-     * @param array $credentials
-     * @return array
      * @throws ValidationException
      */
     public function login(array $credentials): array
@@ -55,16 +50,16 @@ class AuthService
         $loginValue = $credentials['login'] ?? ($credentials['email'] ?? null);
         $columns = config('api-auth.login.search_columns', ['email']);
 
-        $user = $this->userModel::where(function($query) use ($columns, $loginValue) {
+        $user = $this->userModel::where(function ($query) use ($columns, $loginValue) {
             foreach ($columns as $column) {
                 $query->orWhere($column, $loginValue);
             }
         })->first();
 
-        if (!$user || !Hash::check($password, $user->password)) {
+        if (! $user || ! Hash::check($password, $user->password)) {
             Log::warning('Failed login attempt', [
                 'login_identifier' => $loginValue,
-                'ip' => request()->ip()
+                'ip' => request()->ip(),
             ]);
 
             throw ValidationException::withMessages([
@@ -80,8 +75,7 @@ class AuthService
     /**
      * Logout the authenticated user.
      *
-     * @param \Illuminate\Contracts\Auth\Authenticatable $user
-     * @return bool
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      */
     public function logout($user): bool
     {
@@ -97,8 +91,7 @@ class AuthService
     /**
      * Refresh the user's access token.
      *
-     * @param \Illuminate\Contracts\Auth\Authenticatable $user
-     * @return array
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      */
     public function refreshToken($user): array
     {
@@ -112,20 +105,11 @@ class AuthService
     /**
      * Get the authenticated user's profile.
      *
-     * @param \Illuminate\Contracts\Auth\Authenticatable $user
-     * @return array
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      */
     public function getProfile($user): array
     {
-        $userData = $user->toArray();
-
-        // Hide sensitive fields
-        $hiddenFields = config('api-auth.response.hidden_fields', []);
-        foreach ($hiddenFields as $field) {
-            unset($userData[$field]);
-        }
-
-        return ['user' => $userData];
+        return [new UserResource($user)];
     }
 
     protected function safeSendVerification($user): void
@@ -153,7 +137,7 @@ class AuthService
 
         $userData = array_intersect_key($data, array_flip($fields));
         foreach ($data as $key => $value) {
-            if (!in_array($key, ['password', 'password_confirmation']) && !isset($userData[$key])) {
+            if (! in_array($key, ['password', 'password_confirmation']) && ! isset($userData[$key])) {
                 $userData[$key] = $value;
             }
         }
@@ -168,8 +152,7 @@ class AuthService
     /**
      * Generate authentication response with user and token.
      *
-     * @param \Illuminate\Contracts\Auth\Authenticatable $user
-     * @return array
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      */
     protected function generateResponse($user): array
     {
@@ -193,15 +176,7 @@ class AuthService
         ];
 
         if (config('api-auth.response.include_user', true)) {
-            $userData = $user->toArray();
-
-            // Hide sensitive fields
-            $hiddenFields = config('api-auth.response.hidden_fields', []);
-            foreach ($hiddenFields as $field) {
-                unset($userData[$field]);
-            }
-
-            $response['user'] = $userData;
+            $response['user'] = new UserResource($user);
         }
 
         return $response;

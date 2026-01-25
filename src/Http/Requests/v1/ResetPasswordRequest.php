@@ -28,12 +28,12 @@ class ResetPasswordRequest extends FormRequest
             'token' => ['required', 'string'],
             'email' => array_merge(
                 config('api-auth.validation.email', ['required', 'string', 'email', 'max:255']),
-                ['exists:' . $tableName . ',email']
+                ['exists:'.$tableName.',email']
             ),
         ];
 
-        $passwordRules = ['required', 'string', 'min:' . $minLength];
-        
+        $passwordRules = ['required', 'string', 'min:'.$minLength];
+
         if ($requireConfirmation) {
             $passwordRules[] = 'confirmed';
         }

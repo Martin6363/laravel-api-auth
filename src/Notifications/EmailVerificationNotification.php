@@ -15,9 +15,6 @@ class EmailVerificationNotification extends Notification implements ShouldQueue
 
     protected string $actionUrl;
 
-    /**
-     * @param string $actionUrl
-     */
     public function __construct(string $actionUrl)
     {
         $this->actionUrl = $actionUrl;

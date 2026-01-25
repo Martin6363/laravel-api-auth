@@ -15,7 +15,7 @@ it('can register a new user', function () {
                 'token',
                 'token_type',
                 'user' => ['id', 'name', 'email'],
-            ]
+            ],
         ]);
 
     $this->assertDatabaseHas('users', [

@@ -4,8 +4,8 @@ namespace Martin6363\ApiAuth\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use Symfony\Component\Console\Command\Command as CommandAlias;
 use Martin6363\ApiAuth\Providers\ApiAuthServiceProvider;
+use Symfony\Component\Console\Command\Command as CommandAlias;
 
 class InstallApiAuthCommand extends Command
 {
@@ -46,6 +46,7 @@ class InstallApiAuthCommand extends Command
         $this->runMigrations();
 
         $this->info('✅ Installation complete!');
+
         return CommandAlias::SUCCESS;
     }
 
@@ -59,10 +60,12 @@ class InstallApiAuthCommand extends Command
             app_path('Http/Controllers/ApiAuth/v1'),
             app_path('Http/Requests/ApiAuth/v1'),
             app_path('Services/ApiAuth/v1'),
+            app_path('Http/Resources/ApiAuth/v1'),
+            app_path('Notifications/ApiAuth'),
         ];
 
         foreach ($directories as $directory) {
-            if (!File::isDirectory($directory)) {
+            if (! File::isDirectory($directory)) {
                 continue;
             }
 
@@ -85,10 +88,19 @@ class InstallApiAuthCommand extends Command
     protected function getNamespaceReplacements(): array
     {
         return [
-            'Martin6363\\ApiAuth\\Http\\Controllers\\v1'    => 'App\\Http\\Controllers\\ApiAuth\\v1',
-            'Martin6363\\ApiAuth\\Http\\Requests\\v1'       => 'App\\Http\\Requests\\ApiAuth\\v1',
-            'Martin6363\\ApiAuth\\Services\\v1'             => 'App\\Services\\ApiAuth\\v1',
-            'use Martin6363\\ApiAuth\\'                     => 'use App\\',
+            // Original Namespace => New Namespace
+            'Martin6363\\ApiAuth\\Http\\Controllers\\v1' => 'App\\Http\\Controllers\\ApiAuth\\v1',
+            'Martin6363\\ApiAuth\\Http\\Requests\\v1' => 'App\\Http\\Requests\\ApiAuth\\v1',
+            'Martin6363\\ApiAuth\\Services\\v1' => 'App\\Services\\ApiAuth\\v1',
+            'Martin6363\\ApiAuth\\Http\\Resources\\v1' => 'App\\Http\\Resources\\ApiAuth\\v1',
+            'Martin6363\\ApiAuth\\Notifications' => 'App\\Notifications\\ApiAuth',
+
+            // For use statements
+            'use Martin6363\\ApiAuth\\Http\\Controllers\\v1' => 'use App\\Http\\Controllers\\ApiAuth\\v1',
+            'use Martin6363\\ApiAuth\\Http\\Requests\\v1' => 'use App\\Http\\Requests\\ApiAuth\\v1',
+            'use Martin6363\\ApiAuth\\Services\\v1' => 'use App\\Services\\ApiAuth\\v1',
+            'use Martin6363\\ApiAuth\\Http\\Resources\\v1' => 'use App\\Http\\Resources\\ApiAuth\\v1',
+            'use Martin6363\\ApiAuth\\' => 'use App\\',
         ];
     }
 
@@ -129,7 +141,7 @@ class InstallApiAuthCommand extends Command
      */
     protected function checkSanctum(): void
     {
-        if (!class_exists(\Laravel\Sanctum\SanctumServiceProvider::class)) {
+        if (! class_exists(\Laravel\Sanctum\SanctumServiceProvider::class)) {
             $this->info('📦 Installing Laravel Sanctum...');
             $this->call('install:api');
         }

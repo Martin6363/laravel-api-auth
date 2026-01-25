@@ -23,46 +23,46 @@ class RegisterRequest extends FormRequest
         $tableName = (new $userModel)->getTable();
         $minLength = config('api-auth.password.min_length', 8);
         $requireConfirmation = config('api-auth.password.require_confirmation', true);
-        
+
         // Get all validation rules from config
         $validationRules = config('api-auth.validation', []);
-        
+
         $rules = [];
-        
+
         // Process each field from config
         foreach ($validationRules as $field => $fieldRules) {
             if ($field === 'password') {
                 // Handle password separately with special rules
-                $passwordRules = ['required', 'string', 'min:' . $minLength];
-                
+                $passwordRules = ['required', 'string', 'min:'.$minLength];
+
                 if ($requireConfirmation) {
                     $passwordRules[] = 'confirmed';
                 }
-                
+
                 $rules['password'] = $passwordRules;
             } elseif ($field === 'email') {
                 // Add unique rule to email for registration
                 $rules['email'] = array_merge(
                     is_array($fieldRules) ? $fieldRules : [$fieldRules],
-                    ['unique:' . $tableName . ',email']
+                    ['unique:'.$tableName.',email']
                 );
             } else {
                 // Use rules as-is for all other fields
                 $rules[$field] = is_array($fieldRules) ? $fieldRules : [$fieldRules];
             }
         }
-        
+
         // Ensure required fields exist even if not in config
-        if (!isset($rules['name'])) {
+        if (! isset($rules['name'])) {
             $rules['name'] = ['required', 'string', 'max:255'];
         }
-        
-        if (!isset($rules['email'])) {
-            $rules['email'] = ['required', 'string', 'email', 'max:255', 'unique:' . $tableName . ',email'];
+
+        if (! isset($rules['email'])) {
+            $rules['email'] = ['required', 'string', 'email', 'max:255', 'unique:'.$tableName.',email'];
         }
-        
-        if (!isset($rules['password'])) {
-            $passwordRules = ['required', 'string', 'min:' . $minLength];
+
+        if (! isset($rules['password'])) {
+            $passwordRules = ['required', 'string', 'min:'.$minLength];
             if ($requireConfirmation) {
                 $passwordRules[] = 'confirmed';
             }
@@ -80,7 +80,7 @@ class RegisterRequest extends FormRequest
         $messages = [];
         $validationRules = config('api-auth.validation', []);
         $minLength = config('api-auth.password.min_length', 8);
-        
+
         // Generate messages for all configured fields
         foreach (array_keys($validationRules) as $field) {
             if ($field === 'password') {
@@ -96,10 +96,10 @@ class RegisterRequest extends FormRequest
                 $messages['email.unique'] = __('validation.unique', ['attribute' => 'email']);
             } else {
                 // Generic messages for custom fields
-                $messages[$field . '.required'] = __('validation.required', ['attribute' => $field]);
+                $messages[$field.'.required'] = __('validation.required', ['attribute' => $field]);
             }
         }
-        
+
         // Ensure default messages exist
         $defaultMessages = [
             'name.required' => __('validation.required', ['attribute' => 'name']),
@@ -113,7 +113,7 @@ class RegisterRequest extends FormRequest
             ]),
             'password.confirmed' => __('validation.confirmed', ['attribute' => 'password']),
         ];
-        
+
         return array_merge($defaultMessages, $messages);
     }
 }

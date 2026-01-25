@@ -154,11 +154,6 @@ return [
          * Include user data in login/register responses.
          */
         'include_user' => true,
-
-        /*
-         * Fields to hide from user responses (e.g., 'password', 'remember_token').
-         */
-        'hidden_fields' => ['password', 'remember_token'],
     ],
 
     /*

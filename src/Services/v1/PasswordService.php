@@ -12,8 +12,6 @@ class PasswordService
     /**
      * Send password reset link to user.
      *
-     * @param  array  $data
-     * @return string
      * @throws ValidationException
      */
     public function sendResetLink(array $data): string
@@ -39,8 +37,6 @@ class PasswordService
     /**
      * Reset user password.
      *
-     * @param  array  $data
-     * @return string
      * @throws ValidationException
      */
     public function reset(array $data): string

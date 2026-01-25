@@ -25,7 +25,7 @@ class ForgotPasswordRequest extends FormRequest
         return [
             'email' => array_merge(
                 config('api-auth.validation.email', ['required', 'string', 'email', 'max:255']),
-                ['exists:' . $tableName . ',email']
+                ['exists:'.$tableName.',email']
             ),
         ];
     }

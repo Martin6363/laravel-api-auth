@@ -453,6 +453,22 @@ Or with Pest:
 ./vendor/bin/pest
 ```
 
+## Publish Logic
+- [!IMPORTANT] Most of the package's behavior is controlled via the config/api-auth.php file. You should only publish and modify these files if you need to implement custom logic that cannot be achieved through configuration.
+```bash
+php artisan vendor:publish --tag=api-auth-logic ## Published controllers, services, and other logic files to your app for customization.
+```
+
+```bash
+php artisan vendor:publish --tag=api-auth-config      # Configuration file
+php artisan vendor:publish --tag=api-auth-lang        # Language/Translation files
+php artisan vendor:publish --tag=api-auth-controllers # Authentication Controllers
+php artisan vendor:publish --tag=api-auth-services    # Business logic services
+php artisan vendor:publish --tag=api-auth-requests    # Validation/Form Requests
+php artisan vendor:publish --tag=api-auth-resources   # API User Resources
+php artisan vendor:publish --tag=api-auth-notifications # Email & System Notifications
+```
+
 ## 📝 License
 
 This package is open-sourced software licensed under the [MIT license](LICENSE.md).

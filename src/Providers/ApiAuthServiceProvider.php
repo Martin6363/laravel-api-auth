@@ -100,14 +100,32 @@ class ApiAuthServiceProvider extends ServiceProvider
         ], 'api-auth-lang');
 
         $this->publishes([
-            __DIR__.'/../../src/Http/Controllers' => app_path('Http/Controllers/ApiAuth'),
-            __DIR__.'/../../src/Services' => app_path('Services/ApiAuth'),
-            __DIR__.'/../../src/Http/Requests' => app_path('Http/Requests/ApiAuth'),
+            __DIR__.'/../../src/Http/Controllers/v1' => app_path('Http/Controllers/ApiAuth/v1'),
+            __DIR__.'/../../src/Services/v1' => app_path('Services/ApiAuth/v1'),
+            __DIR__.'/../../src/Http/Requests/v1' => app_path('Http/Requests/ApiAuth/v1'),
+            __DIR__.'/../../src/Http/Resources/v1' => app_path('Http/Resources/ApiAuth/v1'),
         ], 'api-auth-logic');
 
         $this->publishes([
-            __DIR__.'/../../src/Http/Requests' => app_path('Http/Requests/ApiAuth'),
+            __DIR__.'/../../src/Services/v1' => app_path('Services/ApiAuth/v1'),
+        ], 'api-auth-services');
+
+        $this->publishes([
+            __DIR__.'/../../src/Http/Controllers/v1' => app_path('Http/Controllers/ApiAuth/v1'),
+        ], 'api-auth-controllers');
+
+        $this->publishes([
+            __DIR__.'/../../src/Http/Requests/v1' => app_path('Http/Requests/ApiAuth/v1'),
         ], 'api-auth-requests');
+
+        $this->publishes([
+            __DIR__.'/../../src/Http/Resources/v1' => app_path('Http/Resources/ApiAuth/v1'),
+        ], 'api-auth-resources');
+
+        $this->publishes([
+            __DIR__.'/../../src/Notifications' => app_path('Notifications/ApiAuth'),
+            __DIR__.'/../../resources/views/emails' => resource_path('views/emails/api-auth'),
+        ], 'api-auth-notifications');
 
         // Register commands
         $this->commands([
