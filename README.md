@@ -3,6 +3,7 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/martin6363/laravel-api-auth.svg?style=flat-square)](https://packagist.org/packages/martin6363/laravel-api-auth)
 [![Total Downloads](https://img.shields.io/packagist/dt/martin6363/laravel-api-auth.svg?style=flat-square)](https://packagist.org/packages/martin6363/laravel-api-auth)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![License](https://img.shields.io/packagist/l/martin6363/laravel-api-auth.svg?style=flat-square)](https://packagist.org/packages/martin6363/laravel-api-auth)
 
 A professional, configuration-driven API authentication package for Laravel 11 & 12+ using Laravel Sanctum. Built with clean architecture principles and designed for easy customization.
 
