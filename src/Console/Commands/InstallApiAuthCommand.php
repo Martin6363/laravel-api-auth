@@ -29,7 +29,17 @@ class InstallApiAuthCommand extends Command
      */
     public function handle(): int
     {
-        $this->info('🚀 Installing Laravel API Auth Package...');
+        $this->line('<fg=magenta>
+    
+     _    ____ ___    _   _   _ _____ _   _ 
+    / \  |  _ \_ _|  / \ | | | |_   _| | | |
+   / _ \ | |_) | |  / _ \| | | | | | | |_| |
+  / ___ \|  __/| | / ___ \ |_| | | | |  _  |
+ /_/   \_\_|  |___/_/   \_\___/  |_| |_| |_|
+                                            
+    </>');
+        $this->line('<fg=cyan;options=bold>🚀 Installing Laravel API Auth Package...</>');
+        $this->line('------------------------------------------');
 
         $this->publishConfig();
         $this->publishLanguages();
@@ -46,6 +56,16 @@ class InstallApiAuthCommand extends Command
         $this->runMigrations();
 
         $this->info('✅ Installation complete!');
+        $this->line('');
+        $this->line('<bg=green;fg=black;options=bold> DONE </> <fg=green>Installation complete!</>');
+        $this->line('');
+        $this->line('⭐ <fg=yellow>Please star the repository if you find it useful:</>');
+        $this->line('🔗 <href=https://github.com/martin6363/laravel-api-auth>https://github.com/martin6363/laravel-api-auth</>');
+        $this->line('');
+        $this->info('Next steps:');
+        $this->line(' 1. Check <comment>config/api-auth.php</comment> for customization.');
+        $this->line(' 2. Run your tests: <comment>php artisan test</comment>');
+        $this->line(' 3. Start building your awesome API! 🚀');
 
         return CommandAlias::SUCCESS;
     }
@@ -65,7 +85,7 @@ class InstallApiAuthCommand extends Command
         ];
 
         foreach ($directories as $directory) {
-            if (! File::isDirectory($directory)) {
+            if (!File::isDirectory($directory)) {
                 continue;
             }
 
@@ -141,7 +161,7 @@ class InstallApiAuthCommand extends Command
      */
     protected function checkSanctum(): void
     {
-        if (! class_exists(\Laravel\Sanctum\SanctumServiceProvider::class)) {
+        if (!class_exists(\Laravel\Sanctum\SanctumServiceProvider::class)) {
             $this->info('📦 Installing Laravel Sanctum...');
             $this->call('install:api');
         }

@@ -130,6 +130,7 @@ class ApiAuthServiceProvider extends ServiceProvider
         // Register commands
         $this->commands([
             \Martin6363\ApiAuth\Console\Commands\InstallApiAuthCommand::class,
+            \Martin6363\ApiAuth\Console\Commands\UninstallApiAuthCommand::class,
         ]);
     }
 }

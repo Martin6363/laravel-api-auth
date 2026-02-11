@@ -50,6 +50,12 @@ This command will:
 - Check for Laravel Sanctum installation
 - Optionally run migrations
 
+### 🗑️ > Uninstallation
+If you need to remove the package and all its published components (config, controllers, services, etc.), run:
+```bash
+php artisan api-auth:uninstall
+```
+
 ### Step 4 (Optional): Publish Logics (Controllers, Services)
 - If you want to customize the internal logic of the authentication (e.g., change the registration logic or add custom responses), you can publish the controllers, services to your application:
 ```bash 
