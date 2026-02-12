@@ -241,7 +241,7 @@ Content-Type: application/json
         'password' => ['required', 'string'],
     ],
     // The database columns to search for the user
-    'search_columns' => ['email', 'username'], 
+    'search_columns' => ['email',], 
 ],
 ```
 

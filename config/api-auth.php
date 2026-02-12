@@ -195,7 +195,7 @@ return [
             'password' => ['required', 'string'],
         ],
         // Fields to search for the 'login' value
-        'search_columns' => ['email', 'username'],
+        'search_columns' => ['email',],
     ],
 
     /*
